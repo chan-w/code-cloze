@@ -11,8 +11,8 @@ new EditorView({
     while left <= right:
         mid = (left + right) // 2
         if target == arr[mid]:
-            {{result = mid}}
-            {{break}}
+            {{m::result = mid}}
+            {{m::break}}
         elif target < arr[mid]:
             {{right = mid - 1}}
         else:

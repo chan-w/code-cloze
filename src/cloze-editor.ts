@@ -1,23 +1,94 @@
-import { EditorState } from '@codemirror/state';
-// import { minimalSetup, basicSetup } from "codemirror";
-import { Decoration, EditorView, ViewUpdate, ViewPlugin, DecorationSet, WidgetType } from "@codemirror/view"
-// import { javascript } from '@codemirror/lang-javascript';
+import { Facet, StateField, EditorState, StateEffect, StateEffectType } from "@codemirror/state";
+import { minimalSetup, basicSetup } from "codemirror";
+import { Decoration, EditorView, ViewUpdate, ViewPlugin, DecorationSet, WidgetType, keymap } from "@codemirror/view"
+import { javascript } from '@codemirror/lang-javascript';
+
+let clozeCounter = 1;
+
+const toggleClozeEffect = StateEffect.define<{ groupId: string, revealed: boolean }>();
+
+class ClozeGroupCollection {
+  public revealedMap: Map<string, boolean>
+  public clozeDecorationSet: DecorationSet
+  constructor(revealedMap: Map<string, boolean>, clozeDecorationSet: DecorationSet) {
+    this.revealedMap = revealedMap
+    this.clozeDecorationSet = clozeDecorationSet
+  }
+}
+
+// const revealedClozeGroups = StateField.define<ClozeGroupCollection>({
+//   create: (state) => {
+//     const parseResults = getClozeDecorationsState(state)
+//     const decSet = parseResults.clozeDecorationSet
+//     const map = new Map<string, boolean>(parseResults.clozePositions.map((x: { groupId: any; }) => [x.groupId, false]))
+//     return new ClozeGroupCollection(map, decSet)
+//   },
+//   update(value, tr) {
+//     value.clozeDecorationSet = value.clozeDecorationSet.map(tr.changes)
+//     // Update cloze state map
+//     let clozeStateMap = value.revealedMap;
+//     for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
+//         const toggledGroupId = e.value.groupId;
+//         const toggleRevealed = e.value.revealed;
+//         clozeStateMap = clozeStateMap.set(toggledGroupId, clozeStateMap.has(toggledGroupId) ? !clozeStateMap.get(toggledGroupId) : toggleRevealed)
+//   }
+//   // Redraw all widgets
+//   const nextDecSet = updateDecorationsState(tr.state, value.revealedMap)
+//   const ret = new ClozeGroupCollection(clozeStateMap, nextDecSet)
+//   return ret
+// }, 
+// provide: f => EditorView.decorations.from(f)
+// })
+
+interface DecorationSetMap extends DecorationSet {
+  clozeStateMap: Map<string, boolean>;
+}
+const revealedClozeGroups = StateField.define<DecorationSetMap>({
+  create: (state) => {
+    const parseResults = getClozeDecorationsState(state)
+    const decSet = parseResults.clozeDecorationSet
+    const map = new Map<string, boolean>(parseResults.clozePositions.map((x: { groupId: any; }) => [x.groupId, false]))
+    decSet.clozeStateMap = map
+    return decSet
+  },
+  update(value, tr) {
+    value = (value.map(tr.changes)) as DecorationSetMap;
+    // Update cloze state map
+    let clozeStateMap = value.clozeStateMap;
+    for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
+        const toggledGroupId = e.value.groupId;
+        const toggleRevealed = e.value.revealed;
+        clozeStateMap = clozeStateMap.set(toggledGroupId, clozeStateMap.has(toggledGroupId) ? !clozeStateMap.get(toggledGroupId) : toggleRevealed)
+  }
+  // Redraw all widgets
+  const nextDecSet = (updateDecorationsState(tr.state, clozeStateMap)) as DecorationSetMap
+  nextDecSet.clozeStateMap = clozeStateMap
+  return nextDecSet;
+}, 
+provide: f => EditorView.decorations.from(f)
+})
+
 
 class ClozeWidget extends WidgetType {
   private revealed: boolean;
-  private clozeContent: string;
+  private clozeContent: string; 
+  public groupId: string;
+  public clozeP;
   
-  constructor(readonly start: number, readonly end: number, content: string) {
-    super(); 
-    this.revealed = false;
-    this.clozeContent = content
+  constructor(readonly start: number, readonly end: number, content: string, groupId: string, revealed: boolean) {
+    super();
+    this.clozeContent = content;
+    this.groupId = groupId;
+    this.revealed = revealed;
+    this.clozeP = `[...]`
   }
 
-  eq(other: ClozeWidget) {
-    return other.start === this.start && other.end === this.end 
-  }
+  // public toggle () {
+  //   this.revealed = !this.revealed
+  //   this.wrapPointer.innerText = this.revealed ? this.clozeContent : ClozeWidget.clozeP
+  // }
 
-  toDOM() {
+  toDOM(view: EditorView) {
     let wrap = document.createElement("span");
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cb";
@@ -31,80 +102,77 @@ class ClozeWidget extends WidgetType {
     wrap.setAttribute("tabindex", "0");
     wrap.setAttribute("role", "button");
   
-    const clozeP = `[...]`;
     let cloze = wrap.appendChild(document.createElement("p"));
-    cloze.innerText = this.revealed ? this.clozeContent : clozeP;
+    cloze.innerText = this.revealed ? this.clozeContent : this.clozeP;
     cloze.style.margin = "0";
     cloze.style.display = "inline";
     // cloze.style.overflow = "auto"; // If text is too long, a scrollbar is generated 
 
     wrap.addEventListener("click", () => {
-      this.revealed = !this.revealed;
-      cloze.innerText = this.revealed ? this.clozeContent : clozeP;
-      wrap.title = this.revealed ? "Click to hide answer" : "Click to reveal answer";
+      // Trigger toggleClozeEffect
+      view.dispatch({
+        effects: toggleClozeEffect.of({ groupId: this.groupId, revealed: !this.revealed })
+      });
     });
-  
+      
     return wrap;
   }
 
-  ignoreEvent() {
+  ignoreEvent() { 
     return false;
   }
 }
 
-const getClozePositions = (content: string): Array<{ from: number, to: number }> => {
-  const regex = /\{\{[^}]+\}\}/g;
+
+// groupId required
+const getClozePositions = (content: string): Array<{ from: number, to: number, groupId: string, content: string }> => {
+  const regex = /\{\{(.*?)::([^}]+)\}\}/g;
   let match;
   const clozePositions = [];
 
   while ((match = regex.exec(content)) !== null) {
-    clozePositions.push({ from: match.index, to: match.index + match[0].length });
+    let [, groupId, clozeContent] = match;
+    clozePositions.push({ from: match.index, to: match.index + match[0].length, groupId: groupId, content: clozeContent });
   }
 
   return clozePositions;
 };
 
-const getClozeDecorations = (state: EditorState): any => {
+const getClozeDecorationsState = (state: EditorState, ): any => {
   const widgets: any[] = [];
   const clozePositions = getClozePositions(state.doc.toString());
   const docContent = state.doc.toString();
 
-  for (const { from, to } of clozePositions) {
+  for (const { from, to, groupId, content } of clozePositions) {
     let deco = Decoration.replace({
-        widget: new ClozeWidget(from, to, docContent.slice(from + 2, to - 2)),
+        widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 4, to - 2), groupId, false),
         side: 1
-    })
-    widgets.push(deco.range(from, to))
+    });
+    widgets.push(deco.range(from, to));
   }
-
-  return Decoration.set(widgets);
+  return { clozeDecorationSet: Decoration.set(widgets), clozePositions: clozePositions}
 };
 
+const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, boolean>, ): DecorationSet => {
+  const widgets: any[] = [];
+  const clozePositions = getClozePositions(state.doc.toString());
+  const docContent = state.doc.toString();
 
-const clozePlugin = ViewPlugin.fromClass(class {
-  decorations: DecorationSet
-
-  constructor(view: EditorView) {
-    this.decorations = getClozeDecorations(view.state)
+  for (const { from, to, groupId, content } of clozePositions) {
+    let deco = Decoration.replace({
+        widget: new ClozeWidget(from, to, docContent.slice(from + 2, to - 2), groupId, clozeStateMap.has(groupId) ? !clozeStateMap.get(groupId) : false),
+        side: 1
+    });
+    widgets.push(deco.range(from, to));
   }
 
-  update(update: ViewUpdate) {
-    if (update.docChanged || update.viewportChanged || update.selectionSet)
-      this.decorations = getClozeDecorations(update.view.state)
-  }
-}, {
-  decorations: v => v.decorations
-})
-
-/*
-const noEdit = EditorView.editable.of(false)
+  return Decoration.set(widgets)
+}
 
 new EditorView({
-  doc: `const y = {{true}} // comment
-const x = {{Array(5).fill('e').every(e => e === 'e')}}
+  doc: `const y = {{b::true}} // comment
+const x = {{b::Array(5).fill('e').every(e => e === 'e')}}
 const z = x && y // z true`,
-  extensions: [basicSetup, clozePlugin, javascript(), noEdit, EditorView.lineWrapping],
-  parent: document.getElementById("js-demo-1")
-});*/
-
-export default clozePlugin
+  extensions: [basicSetup, javascript(), revealedClozeGroups, EditorView.editable.of(false)],
+  parent: document.getElementById("js-demo-1")!
+});
