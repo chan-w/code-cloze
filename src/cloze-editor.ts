@@ -1,7 +1,7 @@
 import { EditorState } from '@codemirror/state';
-import { minimalSetup, basicSetup } from "codemirror";
+// import { minimalSetup, basicSetup } from "codemirror";
 import { Decoration, EditorView, ViewUpdate, ViewPlugin, DecorationSet, WidgetType } from "@codemirror/view"
-import { javascript } from '@codemirror/lang-javascript';
+// import { javascript } from '@codemirror/lang-javascript';
 
 class ClozeWidget extends WidgetType {
   private revealed: boolean;
@@ -13,7 +13,9 @@ class ClozeWidget extends WidgetType {
     this.clozeContent = content
   }
 
-  eq(other: ClozeWidget) { return other.start === this.start && other.end === this.end }
+  eq(other: ClozeWidget) {
+    return other.start === this.start && other.end === this.end 
+  }
 
   toDOM() {
     let wrap = document.createElement("span");
@@ -21,26 +23,33 @@ class ClozeWidget extends WidgetType {
     wrap.className = "cb";
     wrap.style.display = "inline-flex";
     wrap.style.alignItems = "center";
+    wrap.style.border = "1px solid #ccc"; 
+    wrap.style.padding = "5px"; 
+    wrap.style.borderRadius = "5px";
+    // wrap.style.minWidth = "48px"; // Minimum width for mobile hit target
+    // wrap.style.minHeight = "48px"; // Minimum height for mobile hit target
+    wrap.setAttribute("tabindex", "0");
+    wrap.setAttribute("role", "button");
   
     const clozeP = `[...]`;
     let cloze = wrap.appendChild(document.createElement("p"));
     cloze.innerText = this.revealed ? this.clozeContent : clozeP;
     cloze.style.margin = "0";
     cloze.style.display = "inline";
-  
-    let toggleButton = wrap.appendChild(document.createElement("button"));
-    toggleButton.innerText = this.revealed ? "Hide Answer" : "Show Answer";
-    toggleButton.style.marginLeft = "5px";
-    toggleButton.addEventListener("click", () => {
+    // cloze.style.overflow = "auto"; // If text is too long, a scrollbar is generated 
+
+    wrap.addEventListener("click", () => {
       this.revealed = !this.revealed;
       cloze.innerText = this.revealed ? this.clozeContent : clozeP;
-      toggleButton.innerText = this.revealed ? "Hide Answer" : "Show Answer";
+      wrap.title = this.revealed ? "Click to hide answer" : "Click to reveal answer";
     });
   
     return wrap;
   }
 
-  ignoreEvent() { return false }
+  ignoreEvent() {
+    return false;
+  }
 }
 
 const getClozePositions = (content: string): Array<{ from: number, to: number }> => {
@@ -62,7 +71,7 @@ const getClozeDecorations = (state: EditorState): any => {
 
   for (const { from, to } of clozePositions) {
     let deco = Decoration.replace({
-        widget: new ClozeWidget(from, to, docContent.slice(from, to)),
+        widget: new ClozeWidget(from, to, docContent.slice(from + 2, to - 2)),
         side: 1
     })
     widgets.push(deco.range(from, to))
@@ -87,10 +96,15 @@ const clozePlugin = ViewPlugin.fromClass(class {
   decorations: v => v.decorations
 })
 
+/*
 const noEdit = EditorView.editable.of(false)
 
-const view_1 = new EditorView({
-  doc: `const y = {{true}} // comment \nconst x = {{true}}\nconst z = x && y // z true`,
+new EditorView({
+  doc: `const y = {{true}} // comment
+const x = {{Array(5).fill('e').every(e => e === 'e')}}
+const z = x && y // z true`,
   extensions: [basicSetup, clozePlugin, javascript(), noEdit, EditorView.lineWrapping],
   parent: document.getElementById("js-demo-1")
-});
+});*/
+
+export default clozePlugin
