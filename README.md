@@ -1,34 +1,35 @@
 # code-cloze
-A prototype of [cloze deletion](https://en.wikipedia.org/wiki/Cloze_test) for code on mobile and desktop.
+A prototype for practicing coding using [cloze deletion](https://en.wikipedia.org/wiki/Cloze_test) on both mobile and desktop platforms.
 
-Try it here: https://chan-w.github.io/code-cloze-demo-gh-pages/
+Experience it yourself here: [Code Cloze Demo](https://chan-w.github.io/code-cloze-demo-gh-pages/)
 
 ## Development
-We use <!--[-->CodeMirror 6<!--](https://codemirror.net/)--> and <!--[-->Vite.js<!--](https://vitejs.dev/)--> with TypeScript.
+This project uses CodeMirror 6, Vite.js, and TypeScript.
 
-### Notes
-- Cloze functionality implemented in `src/cloze-editor.ts`
-- Examples in:
-  - `src/binary-search-examples.ts`
+### Overview
+- `src/cloze-editor.ts`: Implementation of CodeMirror plugin for cloze functionality
+- `src/binary-search-examples.ts`: Example usages of CodeMirror plugin
     - https://github.com/chan-w/code-cloze/blob/48e25a3db9e7c03bc0e738bcc9a7a5ea642dcfe6/src/binary-search-examples.ts#L6
-  - `src/large-file-example.ts`
+- `src/large-file-example.ts`: Example with a larger file
 
-### Setup
-1. Install dependencies
-   
-```
-npm i
-```
+### Prerequisites
+Make sure you have npm installed on your system. If not, refer to this [guide.](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-2. Dev Server
-   
-```
-npm run dev
-```
+### Project Setup and Running
+Follow these steps to setup the project on your local system:
 
-3. Production Build
-   
-```
-npm run build
-npm run preview
-```
+1. Install project dependencies:
+    ```
+    npm install
+    ```
+
+2. Start the Development Server: 
+    ```
+    npm run dev
+    ```
+
+3. Build for Production: 
+    ```
+    npm run build
+    npm run preview
+    ```
