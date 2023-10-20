@@ -5,7 +5,10 @@ import { javascript } from '@codemirror/lang-javascript';
 
 let clozeCounter = 1;
 
-const toggleClozeEffect = StateEffect.define<{ groupId: string, revealed: boolean }>();
+const toggleClozeEffect = StateEffect.define<{ groupId: string, revealed: boolean }>(/*{
+  map: ({groupId, revealed}, change) => ({groupId: groupId, revealed: revealed})
+}*/)
+
 
 class ClozeGroupCollection {
   public revealedMap: Map<string, boolean>
@@ -54,6 +57,7 @@ const revealedClozeGroups = StateField.define<DecorationSetMap>({
   update(value, tr) {
     value = (value.map(tr.changes)) as DecorationSetMap;
     // Update cloze state map
+    if (tr.effects.length > 0) {
     let clozeStateMap = value.clozeStateMap;
     for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
         const toggledGroupId = e.value.groupId;
@@ -63,7 +67,8 @@ const revealedClozeGroups = StateField.define<DecorationSetMap>({
   // Redraw all widgets
   const nextDecSet = (updateDecorationsState(tr.state, clozeStateMap)) as DecorationSetMap
   nextDecSet.clozeStateMap = clozeStateMap
-  return nextDecSet;
+  return nextDecSet;}
+  return value;
 }, 
 provide: f => EditorView.decorations.from(f)
 })
@@ -80,7 +85,7 @@ class ClozeWidget extends WidgetType {
     this.clozeContent = content;
     this.groupId = groupId;
     this.revealed = revealed;
-    this.clozeP = `[...]`
+    this.clozeP = `[${this.groupId}...]`
   }
 
   // public toggle () {
@@ -160,7 +165,7 @@ const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, b
 
   for (const { from, to, groupId, content } of clozePositions) {
     let deco = Decoration.replace({
-        widget: new ClozeWidget(from, to, docContent.slice(from + 2, to - 2), groupId, clozeStateMap.has(groupId) ? !clozeStateMap.get(groupId) : false),
+        widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 2, to - 2), groupId, clozeStateMap.has(groupId) ? (clozeStateMap.get(groupId) === true) : false), // equality check with true to fix ts2345
         side: 1
     });
     widgets.push(deco.range(from, to));
@@ -172,7 +177,7 @@ const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, b
 new EditorView({
   doc: `const y = {{b::true}} // comment
 const x = {{b::Array(5).fill('e').every(e => e === 'e')}}
-const z = x && y // z true`,
+const z = x {{c::&&}} y // z true`,
   extensions: [basicSetup, javascript(), revealedClozeGroups, EditorView.editable.of(false)],
   parent: document.getElementById("js-demo-1")!
 });
