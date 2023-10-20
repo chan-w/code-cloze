@@ -1,47 +1,7 @@
-import { Facet, StateField, EditorState, StateEffect, StateEffectType } from "@codemirror/state";
-import { minimalSetup, basicSetup } from "codemirror";
-import { Decoration, EditorView, ViewUpdate, ViewPlugin, DecorationSet, WidgetType, keymap } from "@codemirror/view"
-import { javascript } from '@codemirror/lang-javascript';
+import { StateField, EditorState, StateEffect } from "@codemirror/state";
+import { Decoration, EditorView, DecorationSet, WidgetType } from "@codemirror/view"
 
-let clozeCounter = 1;
-
-const toggleClozeEffect = StateEffect.define<{ groupId: string, revealed: boolean }>(/*{
-  map: ({groupId, revealed}, change) => ({groupId: groupId, revealed: revealed})
-}*/)
-
-
-class ClozeGroupCollection {
-  public revealedMap: Map<string, boolean>
-  public clozeDecorationSet: DecorationSet
-  constructor(revealedMap: Map<string, boolean>, clozeDecorationSet: DecorationSet) {
-    this.revealedMap = revealedMap
-    this.clozeDecorationSet = clozeDecorationSet
-  }
-}
-
-// const revealedClozeGroups = StateField.define<ClozeGroupCollection>({
-//   create: (state) => {
-//     const parseResults = getClozeDecorationsState(state)
-//     const decSet = parseResults.clozeDecorationSet
-//     const map = new Map<string, boolean>(parseResults.clozePositions.map((x: { groupId: any; }) => [x.groupId, false]))
-//     return new ClozeGroupCollection(map, decSet)
-//   },
-//   update(value, tr) {
-//     value.clozeDecorationSet = value.clozeDecorationSet.map(tr.changes)
-//     // Update cloze state map
-//     let clozeStateMap = value.revealedMap;
-//     for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
-//         const toggledGroupId = e.value.groupId;
-//         const toggleRevealed = e.value.revealed;
-//         clozeStateMap = clozeStateMap.set(toggledGroupId, clozeStateMap.has(toggledGroupId) ? !clozeStateMap.get(toggledGroupId) : toggleRevealed)
-//   }
-//   // Redraw all widgets
-//   const nextDecSet = updateDecorationsState(tr.state, value.revealedMap)
-//   const ret = new ClozeGroupCollection(clozeStateMap, nextDecSet)
-//   return ret
-// }, 
-// provide: f => EditorView.decorations.from(f)
-// })
+const toggleClozeEffect = StateEffect.define<{ groupId: string, revealed: boolean }>()
 
 interface DecorationSetMap extends DecorationSet {
   clozeStateMap: Map<string, boolean>;
@@ -58,29 +18,30 @@ export const revealedClozeGroups = StateField.define<DecorationSetMap>({
     value = (value.map(tr.changes)) as DecorationSetMap;
     // Update cloze state map
     if (tr.effects.length > 0) {
-    let clozeStateMap = value.clozeStateMap;
-    for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
+      let clozeStateMap = value.clozeStateMap;
+      for (let e of tr.effects) if (e.is(toggleClozeEffect)) {
         const toggledGroupId = e.value.groupId;
         const toggleRevealed = e.value.revealed;
         clozeStateMap = clozeStateMap.set(toggledGroupId, clozeStateMap.has(toggledGroupId) ? !clozeStateMap.get(toggledGroupId) : toggleRevealed)
-  }
-  // Redraw all widgets
-  const nextDecSet = (updateDecorationsState(tr.state, clozeStateMap)) as DecorationSetMap
-  nextDecSet.clozeStateMap = clozeStateMap
-  return nextDecSet;}
-  return value;
-}, 
-provide: f => EditorView.decorations.from(f)
+      }
+      // Redraw all widgets
+      const nextDecSet = (updateDecorationsState(tr.state, clozeStateMap)) as DecorationSetMap
+      nextDecSet.clozeStateMap = clozeStateMap
+      return nextDecSet;
+    }
+    return value;
+  },
+  provide: f => EditorView.decorations.from(f)
 })
 
 export const clozePlugin = revealedClozeGroups
 
 class ClozeWidget extends WidgetType {
   private revealed: boolean;
-  private clozeContent: string; 
+  private clozeContent: string;
   public groupId: string;
   public clozeP;
-  
+
   constructor(readonly start: number, readonly end: number, content: string, groupId: string, revealed: boolean) {
     super();
     this.clozeContent = content;
@@ -89,25 +50,20 @@ class ClozeWidget extends WidgetType {
     this.clozeP = `[... ${this.groupId} ...]`
   }
 
-  // public toggle () {
-  //   this.revealed = !this.revealed
-  //   this.wrapPointer.innerText = this.revealed ? this.clozeContent : ClozeWidget.clozeP
-  // }
-
   toDOM(view: EditorView) {
     let wrap = document.createElement("span");
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cb";
     wrap.style.display = "inline-flex";
     wrap.style.alignItems = "center";
-    wrap.style.border = "1px solid #ccc"; 
-    wrap.style.padding = "5px"; 
+    wrap.style.border = "1px solid #ccc";
+    wrap.style.padding = "5px";
     wrap.style.borderRadius = "5px";
     // wrap.style.minWidth = "48px"; // Minimum width for mobile hit target
     // wrap.style.minHeight = "48px"; // Minimum height for mobile hit target
     wrap.setAttribute("tabindex", "0");
     wrap.setAttribute("role", "button");
-  
+
     let cloze = wrap.appendChild(document.createElement("p"));
     cloze.innerText = this.revealed ? this.clozeContent : this.clozeP;
     cloze.style.margin = "0";
@@ -120,15 +76,14 @@ class ClozeWidget extends WidgetType {
         effects: toggleClozeEffect.of({ groupId: this.groupId, revealed: !this.revealed })
       });
     });
-      
+
     return wrap;
   }
 
-  ignoreEvent() { 
+  ignoreEvent() {
     return false;
   }
 }
-
 
 // groupId required
 const getClozePositions = (content: string): Array<{ from: number, to: number, groupId: string, content: string }> => {
@@ -144,30 +99,30 @@ const getClozePositions = (content: string): Array<{ from: number, to: number, g
   return clozePositions;
 };
 
-const getClozeDecorationsState = (state: EditorState, ): any => {
+const getClozeDecorationsState = (state: EditorState,): any => {
   const widgets: any[] = [];
   const clozePositions = getClozePositions(state.doc.toString());
   const docContent = state.doc.toString();
 
-  for (const { from, to, groupId, content } of clozePositions) {
+  for (const { from, to, groupId, } of clozePositions) {
     let deco = Decoration.replace({
-        widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 4, to - 2), groupId, false),
-        side: 1
+      widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 4, to - 2), groupId, false),
+      side: 1
     });
     widgets.push(deco.range(from, to));
   }
-  return { clozeDecorationSet: Decoration.set(widgets), clozePositions: clozePositions}
+  return { clozeDecorationSet: Decoration.set(widgets), clozePositions: clozePositions }
 };
 
-const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, boolean>, ): DecorationSet => {
+const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, boolean>,): DecorationSet => {
   const widgets: any[] = [];
   const clozePositions = getClozePositions(state.doc.toString());
   const docContent = state.doc.toString();
 
-  for (const { from, to, groupId, content } of clozePositions) {
+  for (const { from, to, groupId, } of clozePositions) {
     let deco = Decoration.replace({
-        widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 2, to - 2), groupId, clozeStateMap.has(groupId) ? (clozeStateMap.get(groupId) === true) : false), // equality check with true to fix ts2345
-        side: 1
+      widget: new ClozeWidget(from, to, docContent.slice(from + 2 + groupId.length + 2, to - 2), groupId, clozeStateMap.has(groupId) ? (clozeStateMap.get(groupId) === true) : false), // equality check with true to fix ts2345
+      side: 1
     });
     widgets.push(deco.range(from, to));
   }
