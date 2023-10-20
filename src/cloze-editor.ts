@@ -46,7 +46,7 @@ class ClozeGroupCollection {
 interface DecorationSetMap extends DecorationSet {
   clozeStateMap: Map<string, boolean>;
 }
-const revealedClozeGroups = StateField.define<DecorationSetMap>({
+export const revealedClozeGroups = StateField.define<DecorationSetMap>({
   create: (state) => {
     const parseResults = getClozeDecorationsState(state)
     const decSet = parseResults.clozeDecorationSet
@@ -73,6 +73,7 @@ const revealedClozeGroups = StateField.define<DecorationSetMap>({
 provide: f => EditorView.decorations.from(f)
 })
 
+export const clozePlugin = revealedClozeGroups
 
 class ClozeWidget extends WidgetType {
   private revealed: boolean;
@@ -85,7 +86,7 @@ class ClozeWidget extends WidgetType {
     this.clozeContent = content;
     this.groupId = groupId;
     this.revealed = revealed;
-    this.clozeP = `[${this.groupId}...]`
+    this.clozeP = `[... ${this.groupId} ...]`
   }
 
   // public toggle () {
@@ -174,10 +175,10 @@ const updateDecorationsState = (state: EditorState, clozeStateMap: Map<string, b
   return Decoration.set(widgets)
 }
 
-new EditorView({
-  doc: `const y = {{b::true}} // comment
-const x = {{b::Array(5).fill('e').every(e => e === 'e')}}
-const z = x {{c::&&}} y // z true`,
-  extensions: [basicSetup, javascript(), revealedClozeGroups, EditorView.editable.of(false)],
-  parent: document.getElementById("js-demo-1")!
-});
+// new EditorView({
+//   doc: `const y = {{b::true}} // comment
+// const x = {{b::Array(5).fill('e').every(e => e === 'e')}}
+// const z = x {{c::&&}} y // z true`,
+//   extensions: [basicSetup, javascript(), revealedClozeGroups, EditorView.editable.of(false)],
+//   parent: document.getElementById("js-demo-1")!
+// });
