@@ -25,7 +25,7 @@ new EditorView({
 
   new EditorView({
     doc:  `def search_first(arr, target):
-    """search_any([1, 2, 2, 2, 3], 2) => 1"""
+    """search_first([1, 2, 2, 2, 3], 2) => 1"""
     left, right = 0, len(arr) - 1
     result = -1
     while left <= right:
@@ -45,7 +45,7 @@ new EditorView({
 
 new EditorView({
     doc:  `def search_last(arr, target):
-    """search_any([1, 2, 2, 2, 3], 2) => 3"""
+    """search_last([1, 2, 2, 2, 3], 2) => 3"""
     left, right = 0, len(arr) - 1
     result = -1
     while left <= right:
