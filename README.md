@@ -3,13 +3,21 @@ A prototype for practicing coding using [cloze deletion](https://en.wikipedia.or
 
 Experience it yourself here: [Code Cloze Demo](https://chan-w.github.io/code-cloze-demo-gh-pages/)
 
+## Creating Clozes
+- Cloze deletions are created as `{{group_id::hidden_text}}`, where group_id is a string.
+    - Please limit the length of a single cloze deletion to 1 line. Instead of multiline cloze deletions, create a cloze deletion on each line with the same `group_id`. 
+- Hidden clozes are displayed to the user as `[... group_id ...]`. 
+- When the user reveals a cloze, all clozes with the same group_id are revealed.
+- For examples, see https://github.com/chan-w/code-cloze/blob/85c2afd482bb5b6c621a9eb7b3695dcc2492d310/src/binary-search-examples.ts#L6
+
+
 ## Development
 This project uses CodeMirror 6, Vite.js, and TypeScript.
 
 ### Overview
 - `src/cloze-editor.ts`: Implementation of CodeMirror plugin for cloze functionality
 - `src/binary-search-examples.ts`: Example usages of CodeMirror plugin
-    - https://github.com/chan-w/code-cloze/blob/48e25a3db9e7c03bc0e738bcc9a7a5ea642dcfe6/src/binary-search-examples.ts#L6
+    - https://github.com/chan-w/code-cloze/blob/85c2afd482bb5b6c621a9eb7b3695dcc2492d310/src/binary-search-examples.ts#L6
 - `src/large-file-example.ts`: Example with a larger file
 
 ### Prerequisites
