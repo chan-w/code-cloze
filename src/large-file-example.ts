@@ -1,14 +1,14 @@
 import { basicSetup } from "codemirror";
 import { EditorView } from "@codemirror/view"
 import { python } from '@codemirror/lang-python';
-import clozePlugin  from './cloze-editor';
+import { clozePlugin }  from './cloze-editor';
 
 new EditorView({
     doc: `
     # An example of a longer file from https://raw.githubusercontent.com/ytdl-org/youtube-dl/master/youtube_dl/aes.py.
-    # youtube-dl is a {{command-line}} program to download videos from YouTube.com and a few more sites. It requires the {{Python}} interpreter, version 2.6, 2.7, or 3.2+, and it is not platform specific. It should work on your Unix box, on Windows or on macOS. It is released {{to the public domain}}, which means you can modify it, redistribute it or use it however you like. 
+    # youtube-dl is a {{a::command-line}} program to download videos from YouTube.com and a few more sites. It requires the {{a::Python}} interpreter, version 2.6, 2.7, or 3.2+, and it is not platform specific. It should work on your Unix box, on Windows or on macOS. It is released {{a::to the public domain}}, which means you can modify it, redistribute it or use it however you like. 
     # 
-    # You can configure youtube-dl by placing any supported command line option to a configuration file. On {{Linux and macOS}}, the system wide configuration file is located at /etc/youtube-dl.conf and the user wide configuration file at ~/.config/youtube-dl/config. On {{Windows}}, the user wide configuration file locations are %APPDATA%\youtube-dl\config.txt or C:\Users\<user name>\youtube-dl.conf. Note that by default configuration file may not exist so you may need to create it yourself.
+    # You can configure youtube-dl by placing any supported command line option to a configuration file. On {{a::Linux and macOS}}, the system wide configuration file is located at /etc/youtube-dl.conf and the user wide configuration file at ~/.config/youtube-dl/config. On {{a::Windows}}, the user wide configuration file locations are %APPDATA%\youtube-dl\config.txt or C:\Users\<user name>\youtube-dl.conf. Note that by default configuration file may not exist so you may need to create it yourself.
     from __future__ import unicode_literals
 
     from math import ceil
@@ -27,8 +27,8 @@ new EditorView({
         @returns {int[]}           padding data
         """
     
-        remaining_length = {{BLOCK_SIZE_BYTES}} - {{len(data)}} % {{BLOCK_SIZE_BYTES}}
-        return {{data + [remaining_length] * remaining_length}}
+        remaining_length = {{a::BLOCK_SIZE_BYTES}} - {{a::len(data)}} % {{a::BLOCK_SIZE_BYTES}}
+        return {{a::data + [remaining_length] * remaining_length}}
     
     
     def aes_ctr_decrypt(data, key, counter):
@@ -41,17 +41,17 @@ new EditorView({
                                    returns the next counter block
         @returns {int[]}           decrypted data
         """
-        expanded_key = {{key_expansion(key)}}
+        expanded_key = {{a::key_expansion(key)}}
         block_count = int(ceil(float(len(data)) / BLOCK_SIZE_BYTES))
     
         decrypted_data = []
         for i in range(block_count):
             counter_block = counter.next_value()
-            block = data[{{i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES}}]
+            block = data[{{a::i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES}}]
             block += [0] * (BLOCK_SIZE_BYTES - len(block))
     
             cipher_counter_block = aes_encrypt(counter_block, expanded_key)
-            decrypted_data += {{xor}}(block, cipher_counter_block)
+            decrypted_data += {{a::xor}}(block, cipher_counter_block)
         decrypted_data = decrypted_data[:len(data)]
     
         return decrypted_data
@@ -67,15 +67,15 @@ new EditorView({
         @returns {int[]}           decrypted data
         """
         expanded_key = key_expansion(key)
-        block_count = int({{ceil(float(len(data)) / BLOCK_SIZE_BYTES)}})
+        block_count = int({{a::ceil(float(len(data)) / BLOCK_SIZE_BYTES)}})
     
         decrypted_data = []
         previous_cipher_block = iv
         for i in range(block_count):
-            block = data[{{i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES}}]
+            block = data[{{a::i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES}}]
             block += [0] * (BLOCK_SIZE_BYTES - len(block))
     
-            decrypted_block = aes_decrypt({{block, expanded_key}})
+            decrypted_block = aes_decrypt({{a::block, expanded_key}})
             decrypted_data += xor(decrypted_block, previous_cipher_block)
             previous_cipher_block = block
         decrypted_data = decrypted_data[:len(data)]
@@ -100,10 +100,10 @@ new EditorView({
         for i in range(block_count):
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
             block = pkcs7_padding(block)
-            mixed_block = xor({{block, previous_cipher_block}})
+            mixed_block = xor({{a::block, previous_cipher_block}})
     
             encrypted_block = aes_encrypt(mixed_block, expanded_key)
-            encrypted_data += {{encrypted_block}}
+            encrypted_data += {{a::encrypted_block}}
     
             previous_cipher_block = encrypted_block
     
@@ -379,14 +379,14 @@ new EditorView({
         data_shifted = []
         for column in range(4):
             for row in range(4):
-                data_shifted.append(data[{{((column + row) & 0b11) * 4 + row}}])
+                data_shifted.append(data[{{a::((column + row) & 0b11) * 4 + row}}])
         return data_shifted
     
     
     def shift_rows_inv(data):
         data_shifted = []
-        {{for column in range(4):}}
-            {{for row in range(4):}}
+        {{a::for column in range(4):}}
+            {{a::for row in range(4):}}
                 data_shifted.append(data[((column - row) & 0b11) * 4 + row])
         return data_shifted
     
@@ -397,8 +397,8 @@ new EditorView({
             if data[i] == 255:
                 data[i] = 0
             else:
-                {{data[i] = data[i] + 1}}
-                {{break}}
+                {{a::data[i] = data[i] + 1}}
+                {{a::break}}
         return data
     
     
