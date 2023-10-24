@@ -1,20 +1,21 @@
-# Anki Integration
-We include a basic implementation of an Anki integration.
+# Anki Integration: Code Cloze Deletion 
+This integration provides cloze deletion functionality for formatted code in Anki flashcards using CodeMirror 6. The current implementation supports syntax highlighting for Python and can be extended to other languages using CodeMirror 6 [language extensions](https://codemirror.net/#languages).
 
-## Limitations
-- JavaScript is not supported officially supported by Anki and [may break](https://docs.ankiweb.net/templates/styling.html#javascript) in a future Anki version
-    - We use Anki Version 2.1.66
-- A new type of note is needed for syntax highlighting for each language in this implementation. The current version only highlights Python files.
+## Anki Supported Version 
+This component is compatible with Anki Version 2.1.66. Please note that we rely on JavaScript, which [isn't officially supported](https://docs.ankiweb.net/templates/styling.html#javascript) by Anki. This may cause challenges in compatibility with future Anki releases.
 
-## Overview
-- We use the output of the production build and add helper functions to modify the display of the front and back of the card
-- `anki-front.html`: A template for the front of a card. Helper functions remove HTML encoding.
-- `anki-back.html`: A template for the back of a card. Helper functions remove HTML encoding and cloze syntax.
+## How it Works
+We use the Vite.js production build and additional helper functions to display the front and back of the Anki flashcards. 
+
+- `anki-front.html`: Front template of the card; the helper functions remove any HTML encoding present. 
+- `anki-back.html`: Back template of the card; the helper functions are used to remove both HTML encoding and cloze syntax. 
 
 ## Usage
-1. Create a new note type as a clone of Basic
-2. In "Card Types" for your new type of note, use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
-- In Styling, remove any CSS except for background color
+1. Clone the Basic note type.
+
+2. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
+
+    - In the Styling section, remove all CSS except for the desired background color:
 
 ```
 .card {
@@ -22,4 +23,8 @@ We include a basic implementation of an Anki integration.
 }
 ```
 
-3. In "Fields", remove the Back field
+3. Go to "Fields" and remove the Back field. 
+
+
+## Limitations
+Currently, syntax highlighting for each language requires a distinct note type that uses a distinct Vite.js build. The build used in `anki-front.html` and `anki-back.html` only supports syntax highlighting for Python.
