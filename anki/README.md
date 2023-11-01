@@ -31,6 +31,25 @@ We use the Vite.js production build and additional helper functions to display t
 2. In the Front field, enter a program with at least 1 cloze
    - Cloze deletions are created as `{{group_id::hidden_text}}`, where group_id is a string.
    - When the user reveals a cloze, all clozes with the same group_id are revealed.
+   - For example, this program contains 3 cloze groups:
+     
+```python
+def search_first(arr, target):
+    """search_first([1, 2, 2, 2, 3], 2) => 1"""
+    left, right = 0, len(arr) - 1
+    result = -1
+    while left <= right:
+        mid = (left + right) // 2
+        if target == arr[mid]:
+            {{a1::result = mid}}
+            {{a1::right = mid - 1}}
+        elif target < arr[mid]:
+            {{a2::right = mid - 1}}
+        else:
+            {{a3::left = mid + 1}}
+    return result
+```
+
 3. Try reiewing the card 
 
 
