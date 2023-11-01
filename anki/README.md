@@ -31,7 +31,7 @@ We use the Vite.js production build and additional helper functions to display t
 2. In the Front field, enter a program with at least 1 cloze
    - Cloze deletions are created as `{{group_id::hidden_text}}`, where group_id is a string.
    - When the user reveals a cloze, all clozes with the same group_id are revealed.
-3. Try using the card 
+3. Try reiewing the card 
 
 
 ## Limitations
