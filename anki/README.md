@@ -25,7 +25,9 @@ We use the Vite.js production build and additional helper functions to display t
 
 2. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
 
-   - Tools > Manage Note Types > Add > Clone: Basic
+   - Tools > Manage Note Types > (New Note Type from 1) > Cards
+     - ![anki_note_type_cards](https://github.com/chan-w/code-cloze/assets/40780153/b117fded-babe-42af-8cf9-432ee88515fc)
+
  
 
 
