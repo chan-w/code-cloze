@@ -11,6 +11,7 @@ We use the Vite.js production build and additional helper functions to display t
 - `anki-back.html`: Back template of the card; the helper functions are used to remove both HTML encoding and cloze syntax. 
 
 ## Usage
+### Note Type Setup
 1. Clone the Basic note type.
 
 2. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
@@ -23,7 +24,14 @@ We use the Vite.js production build and additional helper functions to display t
 }
 ```
 
-3. Go to "Fields" and remove the Back field. 
+3. Go to "Fields" and remove the Back field.
+
+### Creating Cards
+1. Create a card with new note type from [Note Type Setup](#note-type-setup)
+2. In the Front field, enter a program with at least 1 cloze
+   - Cloze deletions are created as `{{group_id::hidden_text}}`, where group_id is a string.
+   - When the user reveals a cloze, all clozes with the same group_id are revealed.
+3. Try using the card 
 
 
 ## Limitations
