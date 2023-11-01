@@ -14,7 +14,11 @@ We use the Vite.js production build and additional helper functions to display t
 ### Note Type Setup
 1. Clone the Basic note type.
 
-2. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
+   - Tools > Manage Note Types > Add > Clone: Basic
+     
+![anki_clone_basic_note_type](https://github.com/chan-w/code-cloze/assets/40780153/e3f4dd44-5ede-432e-a720-bd9b2ad29b4c)
+
+3. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
 
     - In the Styling section, remove all CSS except for the desired background color:
 
