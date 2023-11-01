@@ -27,7 +27,7 @@ We use the Vite.js production build and additional helper functions to display t
 3. Go to "Fields" and remove the Back field.
 
 ### Creating Cards
-1. Create a card with new note type from [Note Type Setup](#note-type-setup)
+1. Create a new note with the note type from [Note Type Setup](#note-type-setup)
 2. In the Front field, enter a program with at least 1 cloze
    - Cloze deletions are created as `{{group_id::hidden_text}}`, where group_id is a string.
    - When the user reveals a cloze, all clozes with the same group_id are revealed.
