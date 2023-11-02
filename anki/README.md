@@ -11,7 +11,7 @@ We use the Vite.js production build and additional helper functions to display t
 - `anki-back.html`: Back template of the card; the helper functions are used to remove both HTML encoding and cloze syntax. 
 
 ## Usage
-We create a new note type containing the JavaScript required for the cloze deletion functionality. 
+We set up a new note type containing the JavaScript required for the cloze deletion functionality. 
 ### Note Type Setup
 1. Clone the Basic note type.
 
@@ -19,7 +19,7 @@ We create a new note type containing the JavaScript required for the cloze delet
      
       - ![anki_clone_basic_note_type](https://github.com/chan-w/code-cloze/assets/40780153/e3f4dd44-5ede-432e-a720-bd9b2ad29b4c)
 
-   - Name the new note type
+   - Name the new note type.
      
       - ![anki_name_note_type](https://github.com/chan-w/code-cloze/assets/40780153/a0cd0f0b-28f3-499f-b727-379e0d943ffa)
 
