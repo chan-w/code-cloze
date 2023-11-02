@@ -41,11 +41,14 @@ We use the Vite.js production build and additional helper functions to display t
 
    - "Front Template", "Back Template", and "Styling" sections of completed card
       - Front Template
-         - ![anki_note_type_front](https://github.com/chan-w/code-cloze/assets/40780153/ac2fd753-14e3-4cda-ac4d-fc9c21e090fb)
+         - ![anki_note_type_front_fixed](https://github.com/chan-w/code-cloze/assets/40780153/ce272cef-c9b5-40b0-8e56-630fa4df4745)
+
       - Back Template
-         - ![anki_note_type_back](https://github.com/chan-w/code-cloze/assets/40780153/f2de6323-3640-4cb9-922d-35aa80271b72)
+         - ![anki_note_type_back_fixed](https://github.com/chan-w/code-cloze/assets/40780153/3ca8f262-d413-484a-a1b3-1f851779d152)
+
       - Styling
-         - ![anki_note_type_styling](https://github.com/chan-w/code-cloze/assets/40780153/78ba5091-e7b7-4142-a55e-53b12c8372ff)
+         - ![anki_note_type_styling_fixed](https://github.com/chan-w/code-cloze/assets/40780153/87127b54-e87a-4941-8052-3b15406208db)
+
 
 
 4. Go to "Fields" and remove the Back field.
