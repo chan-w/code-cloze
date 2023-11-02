@@ -23,7 +23,7 @@ We use the Vite.js production build and additional helper functions to display t
       - ![anki_name_note_type](https://github.com/chan-w/code-cloze/assets/40780153/a0cd0f0b-28f3-499f-b727-379e0d943ffa)
 
 
-2. Navigate to the "Card Types" for the new note type. Use `anki-front.html` as the Front Template and `anki-back.html` as the Back Template.
+2. In the "Front Template" section of the new note type, use `anki-front.html`. In the "Back Template" section of the new note type use `anki-back.html`.
 
    - Tools > Manage Note Types > (New Note Type from 1) > Cards
      - ![anki_note_type_cards](https://github.com/chan-w/code-cloze/assets/40780153/b117fded-babe-42af-8cf9-432ee88515fc)
@@ -31,7 +31,7 @@ We use the Vite.js production build and additional helper functions to display t
  
 
 
-4. In the Styling section, remove all CSS except for the desired background color:
+3. In the "Styling" section of the new note type, remove all CSS except for the background color:
 
 ```
 .card {
@@ -39,7 +39,16 @@ We use the Vite.js production build and additional helper functions to display t
 }
 ```
 
-3. Go to "Fields" and remove the Back field.
+   - "Front Template", "Back Template", and "Styling" sections of completed card
+      - Front Template
+         - ![anki_note_type_front](https://github.com/chan-w/code-cloze/assets/40780153/ac2fd753-14e3-4cda-ac4d-fc9c21e090fb)
+      - Back Template
+         - ![anki_note_type_back](https://github.com/chan-w/code-cloze/assets/40780153/f2de6323-3640-4cb9-922d-35aa80271b72)
+      - Styling
+         - ![anki_note_type_styling](https://github.com/chan-w/code-cloze/assets/40780153/78ba5091-e7b7-4142-a55e-53b12c8372ff)
+
+
+4. Go to "Fields" and remove the Back field.
 
 ### Creating Cards
 1. Create a new note with the note type from [Note Type Setup](#note-type-setup)
