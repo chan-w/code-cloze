@@ -49,6 +49,10 @@ We use the Vite.js production build and additional helper functions to display t
 
 
 4. Go to "Fields" and remove the Back field.
+   - Tools > Manage Note Types > (New Note Type from 1) > Fields > 2: Back > Delete
+     - ![anki_note_type_delete_back_highlighted](https://github.com/chan-w/code-cloze/assets/40780153/99812e3d-a4fa-4f42-96b1-0a3ac8a0e11b)
+       
+
 
 ### Creating Cards
 1. Create a new note with the note type from [Note Type Setup](#note-type-setup)
@@ -57,22 +61,22 @@ We use the Vite.js production build and additional helper functions to display t
    - When the user reveals a cloze, all clozes with the same group_id are revealed.
    - For example, this program contains 3 cloze groups:
      
-```python
-def search_first(arr, target):
-    """search_first([1, 2, 2, 2, 3], 2) => 1"""
-    left, right = 0, len(arr) - 1
-    result = -1
-    while left <= right:
-        mid = (left + right) // 2
-        if target == arr[mid]:
-            {{a1::result = mid}}
-            {{a1::right = mid - 1}}
-        elif target < arr[mid]:
-            {{a2::right = mid - 1}}
-        else:
-            {{a3::left = mid + 1}}
-    return result
-```
+      - ```python
+         def search_first(arr, target):
+             """search_first([1, 2, 2, 2, 3], 2) => 1"""
+             left, right = 0, len(arr) - 1
+             result = -1
+             while left <= right:
+                 mid = (left + right) // 2
+                 if target == arr[mid]:
+                     {{a1::result = mid}}
+                     {{a1::right = mid - 1}}
+                 elif target < arr[mid]:
+                     {{a2::right = mid - 1}}
+                 else:
+                     {{a3::left = mid + 1}}
+             return result
+         ```
 
 3. Try reiewing the card 
 
