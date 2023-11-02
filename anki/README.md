@@ -23,7 +23,7 @@ We use the Vite.js production build and additional helper functions to display t
       - ![anki_name_note_type](https://github.com/chan-w/code-cloze/assets/40780153/a0cd0f0b-28f3-499f-b727-379e0d943ffa)
 
 
-2. In the "Front Template" section of the new note type, use `anki-front.html`. In the "Back Template" section of the new note type use `anki-back.html`.
+2. Modify the new note type's card. In "Front Template", use `anki-front.html`. In "Back Template", use `anki-back.html`.
 
    - Tools > Manage Note Types > (New Note Type from 1) > Cards
      - ![anki_note_type_cards](https://github.com/chan-w/code-cloze/assets/40780153/b117fded-babe-42af-8cf9-432ee88515fc)
@@ -31,7 +31,7 @@ We use the Vite.js production build and additional helper functions to display t
  
 
 
-3. In the "Styling" section of the new note type, remove all CSS except for the background color:
+3. In "Styling", remove all CSS except for the background color:
 
 ```
 .card {
